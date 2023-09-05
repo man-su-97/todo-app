@@ -14,7 +14,7 @@
 
     <label for="description">Description of task:</label>
     <input type="text" id="description" name="description" />
-    <button type="submit" onclick="onClickFunction()">Submit</button>
+    <button type="button" onclick="onClickFunction()">Add Task</button>
     <br />
     <br />
     <h2>Task-List</h2>
@@ -23,6 +23,18 @@
     </div>
   </body>
   <script>
+    function deleteTask(taskID) {
+      fetch(`http://localhost:3000/todos/${taskID}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          fetchDataAndDisplay();
+        })
+        .catch((error) => console.log("Delete eroror:", error));
+    }
     // Function to fetch data and display it in the DOM
     function fetchDataAndDisplay() {
       // Replace with your API URL
@@ -54,6 +66,9 @@
             const delBtn = document.createElement("button");
             delBtn.textContent = "Delete";
 
+            delBtn.addEventListener("click", () => {
+              deleteTask(item.id);
+            });
             // Create a paragraph element for the description and set its text content
             const descriptionElement = document.createElement("p");
             descriptionElement.textContent = item.description;
