@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo</title>
+  </head>
+  <body>
+    <h1>ToDo</h1>
+    <p>Keep track of your tasks.</p>
+    <br />
+    <label for="title">Title of task:</label>
+    <input type="text" id="title" name="title" />
+
+    <label for="description">Description of task:</label>
+    <input type="text" id="description" name="description" />
+    <button type="submit" onclick="onClickFunction()">Submit</button>
+    <br />
+    <br />
+    <h2>Task-List</h2>
+    <div id="result-container">
+      <!-- Fetched data will be displayed here -->
+    </div>
+  </body>
+  <script>
+    // Function to fetch data and display it in the DOM
+    function fetchDataAndDisplay() {
+      // Replace with your API URL
+      const apiUrl = "http://localhost:3000/todos";
+
+      fetch(apiUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json(); // Parse response as JSON
+        })
+        .then((data) => {
+          // Get a reference to the result container
+          const resultContainer = document.getElementById("result-container");
+
+          // Create an unordered list to display the data
+          const ul = document.createElement("ul");
+
+          // Iterate through the data and create list items
+          data.forEach((item) => {
+            // Create a list item for each todo
+            const li = document.createElement("li");
+
+            // Create a title element (e.g., <h2>) and set its text content
+            const titleElement = document.createElement("h3");
+            titleElement.textContent = item.title;
+
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "Delete";
+
+            // Create a paragraph element for the description and set its text content
+            const descriptionElement = document.createElement("p");
+            descriptionElement.textContent = item.description;
+
+            // Append the title and description to the list item
+            li.appendChild(titleElement);
+            titleElement.appendChild(delBtn);
+            li.appendChild(descriptionElement);
+
+            // Append the list item to the unordered list
+            ul.appendChild(li);
+          });
+          resultContainer.innerHTML = "";
+
+          // Append the unordered list to the result container
+          resultContainer.appendChild(ul);
+        })
+
+        .catch((error) => {
+          console.error("Fetch error:", error);
+        });
+    }
+
+    // Call the function to fetch and display data
+    fetchDataAndDisplay();
+
+    function onClickFunction() {
+      fetch("http://localhost:3000/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          title: document.getElementById("title").value,
+          description: document.getElementById("description").value,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then(async (resolve) => {
+          console.log(await resolve.json());
+        })
+        .then(() => fetchDataAndDisplay());
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchDataAndDisplay);
+  </script>
+</html>
