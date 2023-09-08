@@ -106,8 +106,8 @@
           "Content-Type": "application/json",
         },
       })
-        .then(async (resolve) => {
-          console.log(await resolve.json());
+        .then(async (response) => {
+          console.log(await response.json());
         })
         .then(() => fetchDataAndDisplay());
     }
